@@ -10,7 +10,8 @@ MODULE_DESCRIPTION("A hello world LKM");
  * @brief This function is called, when the module is loaded into the kernel
  */
 static int __init my_init(void) {
-	printk("Hello, Kernel!\n");
+	printk("Hello, Kernel!\n"); 
+	// printk is used to print to Linux kernel logs since the console does not exist in the kernel
 	return 0;
 }
 

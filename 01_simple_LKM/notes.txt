@@ -1,0 +1,25 @@
+Setup:
+	ON Raspberry pi, the `sudo apt install linux-headers` for kernel version
+	6.1.21-v8+ does not have a build directory (who the fuck knows why) but the 
+	fix is to turn off 64-bit kernel build by adding to /boot/config.txt:
+		arm_64bit=0
+	and rebooting
+
+1) printf() does not exist in the kernel, we have to print to kernel logs
+	which is what printk() does
+2) A license other than GPL can be given to a module, but the license
+	must be compatible with GPL since the whole Linux package with the
+	functional module must be GPL
+3) At least 2 functions must be specified, an init function and an exit
+	function. Their names do not necessarily matter, but they must be
+	signaled at the end of the module with "module_init(m_init_function)"
+	and the corresponding "module_exit(my_exit_function)"
+4) The local module Makefile must call the Makefile in 
+	/lib/modules/<kernel module version>/build directory, which is set up
+	to build kernel modules. The resulting kernel module is the 
+	"<kernel module name>.ko" file
+5) to initialize the module, use command "insmod <kernel module name>.ko"
+	ex. insmod mymodule.ko
+6) to see list of modules, command "lsmod"
+7) see "dmesg" to view kernel logs
+8) to remove module, command "rmmod <kernel module name>.ko"

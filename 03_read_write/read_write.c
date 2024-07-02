@@ -1,7 +1,10 @@
 #include <linux/module.h>
 #include <linux/init.h>
+// struct file_operations
 #include <linux/fs.h>
+// struct cdev
 #include <linux/cdev.h>
+// copy_to_user copy_from_user
 #include <linux/uaccess.h>
 
 /* Meta Information */
@@ -11,12 +14,13 @@ MODULE_DESCRIPTION("Registers a device nr. and implement some callback functions
 
 /* Buffer for data */
 static char buffer[255];
-static int buffer_pointer = 0;
+static unsigned int buffer_pointer = 0; // JB - had to change to unsigned type to pass a 
+										// Linux static assert placed on use of "min" macro
 
 /* Variables for device and device class */
-static dev_t my_device_nr;
-static struct class *my_class;
-static struct cdev my_device;
+static dev_t my_device_nr; 		// defined in linux/types.h as u32 on Arch
+static struct class *my_class;	// defined in linux/devices/class.h
+static struct cdev my_device;	// defined in linux/cdev.h
 
 #define DRIVER_NAME "dummydriver"
 #define DRIVER_CLASS "MyModuleClass"
@@ -97,7 +101,8 @@ static int __init ModuleInit(void) {
 	printk("read_write - Device Nr. Major: %d, Minor: %d was registered!\n", my_device_nr >> 20, my_device_nr & 0xfffff);
 
 	/* Create device class */
-	if((my_class = class_create(THIS_MODULE, DRIVER_CLASS)) == NULL) {
+	// if((my_class = class_create(THIS_MODULE, DRIVER_CLASS)) == NULL) { // original
+    if ((my_class = class_create(DRIVER_CLASS)) == NULL) {
 		printk("Device class can not be created!\n");
 		goto ClassError;
 	}
