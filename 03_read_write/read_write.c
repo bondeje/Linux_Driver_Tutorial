@@ -1,5 +1,7 @@
 #include <linux/module.h>
 #include <linux/init.h>
+// kernel version checking
+#include <linux/version.h>
 // struct file_operations
 #include <linux/fs.h>
 // struct cdev
@@ -90,7 +92,6 @@ static struct file_operations fops = {
  * @brief This function is called, when the module is loaded into the kernel
  */
 static int __init ModuleInit(void) {
-	int retval;
 	printk("Hello, Kernel!\n");
 
 	/* Allocate a device nr */
@@ -102,7 +103,11 @@ static int __init ModuleInit(void) {
 
 	/* Create device class */
 	// if((my_class = class_create(THIS_MODULE, DRIVER_CLASS)) == NULL) { // original
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,4,0)
     if ((my_class = class_create(DRIVER_CLASS)) == NULL) {
+#else
+    if ((my_class = class_create(THIS_MODULE, DRIVER_CLASS)) == NULL) {
+#endif
 		printk("Device class can not be created!\n");
 		goto ClassError;
 	}
